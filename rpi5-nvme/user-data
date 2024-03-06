@@ -1,0 +1,4 @@
+hostname: MYHOSTNAME
+users: 
+- name: MYUSER
+  ssh_import_id: gh:GHUSERNAME
