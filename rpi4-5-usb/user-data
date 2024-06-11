@@ -1,4 +1,59 @@
-hostname: MYHOSTNAME
-users: 
-- name: MYUSER
-  ssh_import_id: gh:GHUSERNAME
+#cloud-config
+hostname: adlsdlp-iot01
+manage_etc_hosts: true
+
+# needed because sometimes the update fails :(
+ntp:
+  servers:
+    - time.google.com
+
+# cloud-init fails before this point 
+# 
+# apt: 
+#   conf: |
+#     Acquire {
+#       Check-Date "false";
+#       Check-Valid-Until "false";
+#     };
+#   preserve_sources_list: true
+#   sources:
+#     docker:
+#       source: "deb [arch=arm64] https://download.docker.com/linux/ubuntu $RELEASE stable"
+#       keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
+packages:
+  - avahi-daemon
+  - jq
+  - yq
+  - apt-transport-https
+  - ca-certificates
+  - gnupg-agent
+  - whois
+# - docker-ce
+
+users:
+- name: dlp 
+  groups: users,adm,dialout,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo,docker
+  shell: /bin/bash
+  lock_passwd: false
+  # password is adls!dlp1
+  passwd: $6$rounds=4096$/strNbnEY1.1I/D0$kUVetLc4nYgiRgIVpbMf.fbWvURrYDq2RCHbZDC7siv9uodOxtclDWQO29yIDpcWBdY06AfroF3qLjqBzAI1n.
+  # ssh import id will fail inside the iot-ZHAW network
+  ssh_import_id:
+  - gh:phish108
+  sudo: ALL=(ALL) NOPASSWD:ALL
+
+
+timezone: Europe/Zurich
+runcmd:
+# just be certain that docker is installed, which will fail because of the above
+# - apt update
+# - apt install -y docker-ce
+- localectl set-x11-keymap "us" pc105
+- setupcon -k --force || true
+
+

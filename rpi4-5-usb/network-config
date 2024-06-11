@@ -1,0 +1,16 @@
+version: 2
+renderer: networkd
+ethernets:
+  eth0:
+    dhcp4: true
+    dhcp6: true
+    optional: true
+    
+wifis:
+  wlan0:
+    dhcp4: true
+    dhcp6: true
+    optional: true
+    access-points:
+      iot-ZHAW:
+        password: th5sQZ7pd6JP
